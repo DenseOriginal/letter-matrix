@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { distribute, hash, split } from './helpers';
-import { LetterEl } from './Letter';
+import { distribute, hash } from './helpers';
+import { Out } from './Out';
 import { Sentences } from './Sentences';
 import { Settings } from './Settings';
 
@@ -14,7 +14,6 @@ function App() {
 	const [sentences, setSentences] = useState(initialSentences);
 	const [selected, setSelected] = useState('');
 	const letters = useMemo(() => distribute(rows * columns, sentences), [sentences, rows, columns]);
-	const letterRows = split(letters, columns);
 
 	const add = (sentence: string) => setSentences(sentences => [...sentences, sentence]);
 	const remove = (sentence: string) => setSentences(sentences => sentences.filter(s => s != sentence));
@@ -35,24 +34,18 @@ function App() {
 				remove={remove}
 				highlight={highlight}
 			/>
-			{/* Out */}
-			<div className='p-2 bg-black rounded'>
-				{letterRows.map((row, idx) => <div className='flex' key={idx}>
-					{row.map((letter, idx) => <LetterEl key={letter.char + idx} letter={letter} selected={selected} />)}
-				</div>)}
-			</div>
+
+			<Out code={letters} columns={columns} highlight={selected} />
 
 			{/* Keys */}
 			<div className='flex flex-col gap-3 mt-4 w-full'>
 				<h2 className='w-full text-xl'>Keys</h2>
-				{sentences.map(sentence => <div className='p-2 bg-black rounded'>
-					<h2 className='text-xl text-white uppercase mb-2'>#{hash(sentence)}</h2>
-					<div>
-						{letterRows.map((row, idx) => <div className='flex' key={idx}>
-							{row.map((letter, idx) => <LetterEl key={letter.char + idx} letter={letter} onlyShow={hash(sentence)} />)}
-						</div>)}
-					</div>
-				</div>)}
+				{sentences.map(sentence => <Out
+					code={letters}
+					columns={columns}
+					name={hash(sentence)}
+					keyMode
+				/>)}
 			</div>
 		</div>
 	)
