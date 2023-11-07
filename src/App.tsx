@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { distribute, split } from './helpers';
+import { distribute, hash, split } from './helpers';
 import { LetterEl } from './Letter';
 import { Sentences } from './Sentences';
 import { Settings } from './Settings';
@@ -21,27 +21,40 @@ function App() {
 	const highlight = (hash: string) => setSelected(hash);
 
 	return (
-			<div className='flex justify-center items-center flex-col'>
-				<h1 className='text-3xl font-bold'>Letter Matrix Generator</h1>
-				<Settings
-					add={add}
-					setRows={setRows}
-					setColumns={setColumns}
-					rows={rows}
-					columns={columns}
-				/>
-				<Sentences
-					sentences={sentences}
-					remove={remove}
-					highlight={highlight}
-				/>
-				{/* Out */}
-				<div className='p-2 bg-black rounded'>
-					{letterRows.map((row, idx) => <div className='flex' key={idx}>
-						{row.map((letter, idx) => <LetterEl key={letter.char + idx} letter={letter} selected={selected} />)}
-					</div>)}
-				</div>
+		<div className='flex justify-center items-center flex-col py-5'>
+			<h1 className='text-3xl font-bold'>Letter Matrix Generator</h1>
+			<Settings
+				add={add}
+				setRows={setRows}
+				setColumns={setColumns}
+				rows={rows}
+				columns={columns}
+			/>
+			<Sentences
+				sentences={sentences}
+				remove={remove}
+				highlight={highlight}
+			/>
+			{/* Out */}
+			<div className='p-2 bg-black rounded'>
+				{letterRows.map((row, idx) => <div className='flex' key={idx}>
+					{row.map((letter, idx) => <LetterEl key={letter.char + idx} letter={letter} selected={selected} />)}
+				</div>)}
 			</div>
+
+			{/* Keys */}
+			<div className='flex flex-col gap-3 mt-4 w-full'>
+				<h2 className='w-full text-xl'>Keys</h2>
+				{sentences.map(sentence => <div className='p-2 bg-black rounded'>
+					<h2 className='text-xl text-white uppercase mb-2'>#{hash(sentence)}</h2>
+					<div>
+						{letterRows.map((row, idx) => <div className='flex' key={idx}>
+							{row.map((letter, idx) => <LetterEl key={letter.char + idx} letter={letter} onlyShow={hash(sentence)} />)}
+						</div>)}
+					</div>
+				</div>)}
+			</div>
+		</div>
 	)
 }
 
