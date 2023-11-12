@@ -5,7 +5,7 @@ const randomId = (length = 6) => {
 	return Math.random().toString(36).substring(2, length + 2);
 };
 
-export const Projects = () => {
+export const ProjectsList = () => {
 	const [projects, setProjects] = useLocalStorage<Project[]>('projects', []);
 
 	const addProject = () => {

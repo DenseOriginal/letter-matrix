@@ -9,3 +9,8 @@ export interface Project {
 	seed: string;
 	id: string;
 }
+
+export interface State {
+	projects: Project[];
+	currentProject: string | undefined;
+}
