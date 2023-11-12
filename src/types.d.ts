@@ -8,6 +8,8 @@ export interface Project {
 	sentences: string[];
 	seed: string;
 	id: string;
+	rows: number;
+	cols: number;
 }
 
 export interface State {

@@ -1,26 +1,36 @@
-import { useLocalStorage } from "./hooks";
-import { Project } from "./types";
+import { useAppDispatch, useAppSelector } from "./hooks/redux";
+import { onAddProject, onSetCurrentProject } from "./store/actions";
 
 const randomId = (length = 6) => {
 	return Math.random().toString(36).substring(2, length + 2);
 };
 
+const defaultRows = 22
+const defaultCols = 35
+
 export const ProjectsList = () => {
-	const [projects, setProjects] = useLocalStorage<Project[]>('projects', []);
+	const projects = useAppSelector(state => state.projects);
+	const dispatch = useAppDispatch();
 
 	const addProject = () => {
 		const name = prompt('Name?') || 'New project';
 		const seed = Date.now().toString();
 		const id = randomId();
 
-			setProjects([
-				...projects,
-				{ name, seed, id, sentences: [] }
-			])
+		dispatch(onAddProject({
+			name,
+			seed,
+			id,
+			sentences: [],
+			rows: defaultRows,
+			cols: defaultCols,
+		}));
+
+		dispatch(onSetCurrentProject(id));
 	}
 
 	const selectProject = (id: string) => {
-		
+		dispatch(onSetCurrentProject(id));
 	}
 
 	return <div className="absolute top-0 -left-6 -translate-x-full w-44">
@@ -34,7 +44,10 @@ export const ProjectsList = () => {
 		<ul>
 			{projects.map(project => <li key={project.name} className="flex justify-between items-center text-sm">
 				<span>{project.name}</span>
-				<button className="text-gray-500 hover:text-gray-700 transition-all">
+				<button
+					className="text-gray-500 hover:text-gray-700 transition-all"
+					onClick={() => selectProject(project.id)}
+				>
 					<i className="fa-solid fa-pencil"></i>
 				</button>
 			</li>)}
