@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { split } from "./helpers";
 import { LetterEl } from "./Letter";
 import { Letter } from "./types";
@@ -18,6 +19,8 @@ export function Out(props: Props) {
 
 
 function SvgElement(props: Props) {
+	const svgRef = useRef<HTMLElement>();
+
 	const rows = split(props.code, props.columns);
 	const width = getWidthInPx(props.columns);
 	const height = getHeightInPx(rows.length, !!props.name);
@@ -29,39 +32,66 @@ function SvgElement(props: Props) {
 	const codeViewHeight = remToPx(rows.length);
 	const codeViewWidth = remToPx(props.columns);
 
-	return <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-		<defs>
-			<style>
-				@import url("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i");
-			</style>
-		</defs>
-		<rect x="0" y="0" width="100%" height="100%" rx="6" fill="#202029" />
-		{props.name && <text
-			x={paddingPx}
-			y={paddingPx + remToPx(nameFontSize) - 4}
-			fontFamily="Roboto Mono"
-			textAnchor="start"
-			fill="white"
-			fontSize={`${nameFontSize}rem`}
-			style={{ textTransform: 'uppercase' }}
-		>#{props.name}</text>}
-		<svg
-			viewBox={`0 0 ${codeViewWidth} ${codeViewHeight}`}
-			width={codeViewWidth}
-			height={codeViewHeight}
-			x={codeViewOffsetX}
-			y={codeViewOffsetY}
+	const download = () => {
+		const fileName = `${props.name?.toUpperCase() || 'key'}.svg`;
+		const fileContent = svgRef.current?.innerHTML || '';
+		const myFile = new Blob([fileContent], { type: 'text/plain' });
+
+		window.URL = window.URL || window.webkitURL;
+		const dlBtn = document.createElement('a');
+
+		dlBtn.setAttribute("href", window.URL.createObjectURL(myFile));
+		dlBtn.setAttribute("download", fileName);
+		dlBtn.click();
+	}
+
+	return <div className="relative">
+		<div ref={ref => svgRef.current = ref!}>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width={width}
+				height={height}
+				viewBox={`0 0 ${width} ${height}`}
+			>
+				{/* <defs>
+					<style>
+						@import url("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i");
+					</style>
+				</defs> */}
+				<rect x="0" y="0" width="100%" height="100%" rx="6" fill="#202029" />
+				{props.name && <text
+					x={paddingPx}
+					y={paddingPx + remToPx(nameFontSize) - 4}
+					fontFamily="Courier New"
+					textAnchor="start"
+					fill="white"
+					fontSize={`${remToPx(nameFontSize)}px`}
+				>#{props.name.toUpperCase()}</text>}
+				<svg
+					viewBox={`0 0 ${codeViewWidth} ${codeViewHeight}`}
+					width={codeViewWidth}
+					height={codeViewHeight}
+					x={codeViewOffsetX}
+					y={codeViewOffsetY}
+				>
+					{rows.map((row, rowIdx) => row.map((letter, colIdx) => <LetterEl
+						key={letter.char + rowIdx + colIdx}
+						row={rowIdx}
+						col={colIdx}
+						letter={letter}
+						selected={props.highlight || props.name}
+						keyMode={props.keyMode}
+					/>))}
+				</svg>
+			</svg>
+		</div>
+		<button
+			onClick={download}
+			className="absolute top-0 -right-4 translate-x-full px-2 py-1 text-white rounded-md bg-gray-400"
 		>
-			{rows.map((row, rowIdx) => row.map((letter, colIdx) => <LetterEl
-				key={letter.char + rowIdx + colIdx}
-				row={rowIdx}
-				col={colIdx}
-				letter={letter}
-				selected={props.highlight || props.name}
-				keyMode={props.keyMode}
-			/>))}
-		</svg>
-	</svg>
+			Download
+		</button>	
+	</div>
 }
 
 const nameFontSize = 1.75;

@@ -45,6 +45,7 @@ function App() {
 					columns={columns}
 					name={hash(sentence)}
 					keyMode
+					key={hash(sentence)}
 				/>)}
 			</div>
 		</div>

@@ -1,4 +1,3 @@
-import { classNames } from "./helpers";
 import { remToPx } from "./Out";
 import { Letter } from "./types"
 
@@ -28,19 +27,10 @@ export const LetterEl = (props: Props) => {
 			y={props.row * rem + rem - 2.5}
 			width={rem}
 			height={rem}
-			fontFamily="Roboto mono"
+			fontFamily="Courier New"
 			fill="white"
 			fontSize={rem}
 			style={{ userSelect: 'none' }}
 		>{props.letter.char}</text>
 	</>
-
-	return <span
-		className={classNames(
-			"leading-[1rem] w-4 grid place-content-center text-white",
-			!keyMode && highlight && 'bg-red-600',
-			keyMode && !highlight && '!text-black',
-			keyMode && highlight && 'bg-white text-white'
-		)}
-	>{props.letter.char}</span>
 }
