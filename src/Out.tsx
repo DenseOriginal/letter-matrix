@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { split } from "./helpers";
+import { split } from "./helpers/helpers";
 import { LetterEl } from "./Letter";
 import { Letter } from "./types";
 

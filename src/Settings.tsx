@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { classNames } from "./helpers";
+import { classNames } from "./helpers/helpers";
 
 interface Props {
 	add: (string: string) => void;

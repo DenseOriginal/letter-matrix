@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { distribute, hash } from './helpers';
+import { distribute, hash } from './helpers/helpers';
 import { useAppDispatch, useAppSelector } from './hooks/redux';
 import { Out } from './Out';
 import { ProjectsList } from './Projects';

@@ -1,4 +1,4 @@
-import { hash } from "./helpers";
+import { hash } from "./helpers/helpers";
 
 interface Props {
 	sentences: string[];
