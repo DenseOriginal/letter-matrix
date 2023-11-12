@@ -29,6 +29,7 @@ export function Settings(props: Props) {
 					value={input}
 					onChange={e => setInput(e.currentTarget.value)}
 					className={inputClassNames}
+					onKeyUp={e => e.key == 'Enter' && addSentence()}
 				/>
 				<button
 					onClick={addSentence}
