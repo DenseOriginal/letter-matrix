@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { distribute, hash } from './helpers';
 import { Out } from './Out';
+import { Projects } from './Projects';
 import { Sentences } from './Sentences';
 import { Settings } from './Settings';
 
@@ -20,33 +21,37 @@ function App() {
 	const highlight = (hash: string) => setSelected(hash);
 
 	return (
-		<div className='flex justify-center items-center flex-col py-5'>
+		<div className='relative flex justify-center items-center flex-col py-5'>
 			<h1 className='text-3xl font-bold'>Letter Matrix Generator</h1>
-			<Settings
-				add={add}
-				setRows={setRows}
-				setColumns={setColumns}
-				rows={rows}
-				columns={columns}
-			/>
-			<Sentences
-				sentences={sentences}
-				remove={remove}
-				highlight={highlight}
-			/>
 
-			<Out code={letters} columns={columns} highlight={selected} />
-
-			{/* Keys */}
-			<div className='flex flex-col gap-3 mt-4 w-full'>
-				<h2 className='w-full text-xl'>Keys</h2>
-				{sentences.map(sentence => <Out
-					code={letters}
+			<div className='relative'>
+				<Projects />
+				<Settings
+					add={add}
+					setRows={setRows}
+					setColumns={setColumns}
+					rows={rows}
 					columns={columns}
-					name={hash(sentence)}
-					keyMode
-					key={hash(sentence)}
-				/>)}
+				/>
+				<Sentences
+					sentences={sentences}
+					remove={remove}
+					highlight={highlight}
+				/>
+
+				<Out code={letters} columns={columns} highlight={selected} />
+
+				{/* Keys */}
+				<div className='flex flex-col gap-3 mt-4 w-full'>
+					<h2 className='w-full text-xl'>Keys</h2>
+					{sentences.map(sentence => <Out
+						code={letters}
+						columns={columns}
+						name={hash(sentence)}
+						keyMode
+						key={hash(sentence)}
+					/>)}
+				</div>
 			</div>
 		</div>
 	)
