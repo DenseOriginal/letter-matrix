@@ -1,13 +1,15 @@
 import { Letter } from '../types';
+import { PRNG } from './random';
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?=@#:;*/';
 
 const randomLetter = (): Letter => ({
-	char: characters[Math.floor(Math.random() * characters.length)],
+	char: characters[Math.floor(PRNG.random() * characters.length)],
 	parents: []
 })
 
-export const distribute = (totalLength: number, sentences: string[]): Letter[] => {
+export const distribute = (totalLength: number, sentences: string[], seed: number): Letter[] => {
+	PRNG.setSeed(seed);
 	const mappedSentences: Letter[][] = sentences.map(sentence =>
 		[...sentence].map(char => ({ char: char.toUpperCase(), parents: [hash(sentence)] }))
 	);
@@ -24,7 +26,7 @@ export const distribute = (totalLength: number, sentences: string[]): Letter[] =
 	// Generate a list of unique random positions in the distribution array
 	const positions = new Set<number>();
 	while (positions.size < allChars.length) {
-		positions.add(Math.floor(Math.random() * totalLength));
+		positions.add(Math.floor(PRNG.random() * totalLength));
 	}
 	const uniquePositions = Array.from(positions);
 
@@ -62,7 +64,7 @@ export const merge = (arrays: Letter[][]): Letter[] => {
 	}
 
 	for (let i = 0; i < totalLength; i++) { 
-		const propIndex = Math.floor(Math.random() * propability.length);
+		const propIndex = Math.floor(PRNG.random() * propability.length);
 		const setIndex = propability[propIndex];
 		const currentLetter = getSet(setIndex).shift()!;
 		const parent = currentLetter.parents[0];

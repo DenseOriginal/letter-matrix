@@ -14,7 +14,7 @@ export const ProjectsList = () => {
 
 	const addProject = () => {
 		const name = prompt('Name?') || 'New project';
-		const seed = Date.now().toString();
+		const seed = Date.now();
 		const id = randomId();
 
 		dispatch(onAddProject({

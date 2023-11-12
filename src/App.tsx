@@ -37,7 +37,7 @@ const Project = () => {
 	const projects = useAppSelector(state => state.projects);
 
 	const currentProject = projects.find(project => project.id == currentId)!;
-	const { rows, cols, sentences } = currentProject;
+	const { rows, cols, sentences, seed } = currentProject;
 
 	const updateProject = <K extends keyof ProjectType>(key: K) =>
 		(value: ProjectType[K]) => dispatch(onUpdateProject(currentId, { [key]: value }));
@@ -47,7 +47,10 @@ const Project = () => {
 	const setSentences = updateProject('sentences');
 
 	const [selected, setSelected] = useState('');
-	const letters = useMemo(() => distribute(rows * cols, sentences), [sentences, rows, cols]);
+	const letters = useMemo(
+		() => distribute(rows * cols, sentences, seed),
+		[sentences, rows, cols]
+	);
 
 	const add = (sentence: string) => setSentences([...sentences, sentence]);
 	const remove = (sentence: string) => setSentences(sentences.filter(s => s != sentence));

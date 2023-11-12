@@ -6,7 +6,7 @@ export interface Letter {
 export interface Project {
 	name: string;
 	sentences: string[];
-	seed: string;
+	seed: number;
 	id: string;
 	rows: number;
 	cols: number;

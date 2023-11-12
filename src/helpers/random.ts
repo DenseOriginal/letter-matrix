@@ -3,7 +3,7 @@ let m_z = 987654321;
 const mask = 0xffffffff;
 
 // Takes any integer
-function seed(i: number) {
+function setSeed(i: number) {
 	m_w = (123456789 + i) & mask;
 	m_z = (987654321 - i) & mask;
 }
@@ -19,6 +19,6 @@ function random() {
 }
 
 export const PRNG = {
-	seed,
+	setSeed,
 	random
 }
