@@ -5,7 +5,7 @@ export const onAddProject = (project: Project) => ({
 	project
 });
 
-export const onSetCurrentProject = (id: string) => ({
+export const onSetCurrentProject = (id: string | undefined) => ({
 	type: 'SET_CURRENT_PROJECT' as const,
 	id
 });
