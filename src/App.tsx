@@ -33,10 +33,10 @@ const NoProject = () => {
 
 const Project = () => {
 	const dispatch = useAppDispatch();
-	const { currentId, currentProject } = useAppSelector(state => ({
-		currentId: state.currentProject!,
-		currentProject: state.projects.find(project => project.id == state.currentProject)!,
-	}));
+	const currentId = useAppSelector(state => state.currentProject!);
+	const projects = useAppSelector(state => state.projects);
+
+	const currentProject = projects.find(project => project.id == currentId)!;
 	const { rows, cols, sentences } = currentProject;
 
 	const updateProject = <K extends keyof ProjectType>(key: K) =>
