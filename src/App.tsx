@@ -15,7 +15,7 @@ function App() {
 	const currentProject = state.projects.find(project => project.id == state.currentProject);
 
 	return (
-		<div className='relative flex justify-center flex-col py-5'>
+		<div className='relative flex items-center flex-col py-5'>
 			<h1 className='text-3xl font-bold'>Letter Matrix Generator</h1>
 
 			<div className='relative w-full'>
