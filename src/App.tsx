@@ -1,18 +1,15 @@
 import { useMemo, useState } from 'react';
 import { distribute, hash } from './helpers';
-import { useAppSelector } from './hooks/redux';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
 import { Out } from './Out';
 import { ProjectsList } from './Projects';
 import { Sentences } from './Sentences';
 import { Settings } from './Settings';
-
-const initialSentences = [
-	"Lorem ipsum dolor amet",
-];
+import { onUpdateProject } from './store/actions';
+import { Project as ProjectType } from './types';
 
 function App() {
-	const state = useAppSelector(state => state);
-	const currentProject = state.projects.find(project => project.id == state.currentProject);
+	const currentProject = useAppSelector(state => state.projects.find(project => project.id == state.currentProject));
 
 	return (
 		<div className='relative flex items-center flex-col py-5'>
@@ -35,14 +32,25 @@ const NoProject = () => {
 }
 
 const Project = () => {
-	const [rows, setRows] = useState(22);
-	const [columns, setColumns] = useState(35);
-	const [sentences, setSentences] = useState(initialSentences);
-	const [selected, setSelected] = useState('');
-	const letters = useMemo(() => distribute(rows * columns, sentences), [sentences, rows, columns]);
+	const dispatch = useAppDispatch();
+	const { currentId, currentProject } = useAppSelector(state => ({
+		currentId: state.currentProject!,
+		currentProject: state.projects.find(project => project.id == state.currentProject)!,
+	}));
+	const { rows, cols, sentences } = currentProject;
 
-	const add = (sentence: string) => setSentences(sentences => [...sentences, sentence]);
-	const remove = (sentence: string) => setSentences(sentences => sentences.filter(s => s != sentence));
+	const updateProject = <K extends keyof ProjectType>(key: K) =>
+		(value: ProjectType[K]) => dispatch(onUpdateProject(currentId, { [key]: value }));
+
+	const setRows = updateProject('rows');
+	const setColumns = updateProject('cols');
+	const setSentences = updateProject('sentences');
+
+	const [selected, setSelected] = useState('');
+	const letters = useMemo(() => distribute(rows * cols, sentences), [sentences, rows, cols]);
+
+	const add = (sentence: string) => setSentences([...sentences, sentence]);
+	const remove = (sentence: string) => setSentences(sentences.filter(s => s != sentence));
 	const highlight = (hash: string) => setSelected(hash);
 
 	return <>
@@ -51,7 +59,7 @@ const Project = () => {
 			setRows={setRows}
 			setColumns={setColumns}
 			rows={rows}
-			columns={columns}
+			columns={cols}
 		/>
 		<Sentences
 			sentences={sentences}
@@ -59,14 +67,14 @@ const Project = () => {
 			highlight={highlight}
 		/>
 
-		<Out code={letters} columns={columns} highlight={selected} />
+		<Out code={letters} columns={cols} highlight={selected} />
 
 		{/* Keys */}
 		<div className='flex flex-col gap-3 mt-4 w-full'>
 			<h2 className='w-full text-xl'>Keys</h2>
 			{sentences.map(sentence => <Out
 				code={letters}
-				columns={columns}
+				columns={cols}
 				name={hash(sentence)}
 				keyMode
 				key={hash(sentence)}
