@@ -87,9 +87,9 @@ function SvgElement(props: Props) {
 		</div>
 		<button
 			onClick={download}
-			className="absolute top-0 -right-4 translate-x-full px-2 py-1 text-white rounded-md bg-gray-400"
+			className="absolute top-0 -right-4 translate-x-full px-2 py-1 text-white rounded-md bg-gray-700"
 		>
-			Download
+			<i className="fa-solid fa-download"></i>
 		</button>	
 	</div>
 }
