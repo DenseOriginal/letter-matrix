@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react';
 import { distribute, hash } from './helpers/helpers';
-import { useAppDispatch, useAppSelector, useCurrentProjectUpdater } from './hooks/redux';
+import { useAppSelector } from './hooks/redux';
 import { Out } from './Out';
 import { ProjectsList } from './Projects';
 import { Sentences } from './Sentences';
 import { Settings } from './Settings';
-import { Project as ProjectType } from './types';
-import { actions } from './store/reducer';
+import { currentProjectSelector } from './store/selectors';
 
 function App() {
 	const currentProject = useAppSelector(state => state.projects.find(project => project.id == state.currentProject));
@@ -32,13 +31,7 @@ const NoProject = () => {
 }
 
 const Project = () => {
-	const currentId = useAppSelector(state => state.currentProject!);
-	const projects = useAppSelector(state => state.projects);
-
-	const currentProject = projects.find(project => project.id == currentId)!;
-	const { rows, cols, sentences, seed } = currentProject;
-
-	const setSentences = useCurrentProjectUpdater('sentences');
+	const { rows, cols, sentences, seed } = useAppSelector(currentProjectSelector);
 
 	const [selected, setSelected] = useState('');
 	const letters = useMemo(

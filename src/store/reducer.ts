@@ -6,10 +6,10 @@ const parsedState = JSON.parse(localStorageState);
 
 const jasonMapper = (state: any) => ({
 	...state,
-	projects: state.projects.map((project: any) => ({
+	projects: state.projects?.map((project: any) => ({
 		...project,
 		style: project.style || { background: "#202029", text: "#ffffff", border: false },
-	}))
+	})) || []
 })
 
 const initialState: State = {

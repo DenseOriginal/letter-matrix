@@ -1,6 +1,5 @@
 import { classNames } from "./helpers/helpers";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
-import { onAddProject, onDeleteProject, onSetCurrentProject } from "./store/actions";
 import { actions } from "./store/reducer";
 
 const randomId = (length = 6) => {
