@@ -42,8 +42,6 @@ const Project = () => {
 	const updateProject = <K extends keyof ProjectType>(key: K) =>
 		(value: ProjectType[K]) => dispatch(onUpdateProject(currentId, { [key]: value }));
 
-	const setRows = updateProject('rows');
-	const setColumns = updateProject('cols');
 	const setSentences = updateProject('sentences');
 
 	const [selected, setSelected] = useState('');
@@ -52,7 +50,6 @@ const Project = () => {
 		[sentences, rows, cols]
 	);
 
-	const add = (sentence: string) => setSentences([...sentences, sentence]);
 	const remove = (sentence: string) => setSentences(sentences.filter(s => s != sentence));
 	const highlight = (hash: string) => setSelected(hash);
 

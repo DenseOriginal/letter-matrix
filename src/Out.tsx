@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { split } from "./helpers/helpers";
 import { LetterEl } from "./Letter";
 import { Letter } from "./types";
+import { useAppSelector } from "./hooks/redux";
+import { currentProjectSelector } from "./store/selectors";
 
 interface Props {
 	code: Letter[];
@@ -17,9 +19,11 @@ export function Out(props: Props) {
 	</figure>
 }
 
-
 function SvgElement(props: Props) {
+	const { style } = useAppSelector(currentProjectSelector);
+
 	const svgRef = useRef<HTMLElement>();
+	const id = useMemo(() => Math.random().toString(), []);
 
 	const rows = split(props.code, props.columns);
 	const width = getWidthInPx(props.columns);
@@ -53,18 +57,38 @@ function SvgElement(props: Props) {
 				height={height}
 				viewBox={`0 0 ${width} ${height}`}
 			>
-				{/* <defs>
-					<style>
+				<defs>
+					<rect
+						id={`rectangle-${id}`}
+						x="0"
+						y="0"
+						width={width}
+						height={height}
+						rx="6"
+					/>
+					<clipPath id={`border-clip-${id}`}>
+						<use xlinkHref={`#rectangle-${id}`} />
+					</clipPath>
+					{/* <style>
 						@import url("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i");
-					</style>
-				</defs> */}
-				<rect x="0" y="0" width="100%" height="100%" rx="6" fill="#202029" />
+					</style> */}
+				</defs>
+				<use
+					xlinkHref={`#rectangle-${id}`}
+					clipPath={`url(#border-clip-${id})`}
+					height={height}
+					fill={style.background}
+					{...(style.border ? {
+						stroke: "black",
+						strokeWidth: "4px"
+					} : {})}
+				/>
 				{props.name && <text
 					x={paddingPx}
 					y={paddingPx + remToPx(nameFontSize) - 4}
 					fontFamily="Courier New"
 					textAnchor="start"
-					fill="white"
+					fill={style.text}
 					fontSize={`${remToPx(nameFontSize)}px`}
 				>#{props.name.toUpperCase()}</text>}
 				<svg
@@ -81,6 +105,7 @@ function SvgElement(props: Props) {
 						letter={letter}
 						selected={props.highlight || props.name}
 						keyMode={props.keyMode}
+						color={style.text}
 					/>))}
 				</svg>
 			</svg>
@@ -90,7 +115,7 @@ function SvgElement(props: Props) {
 			className="absolute top-0 -right-4 translate-x-full px-2 py-1 text-white rounded-md bg-gray-700"
 		>
 			<i className="fa-solid fa-download"></i>
-		</button>	
+		</button>
 	</div>
 }
 

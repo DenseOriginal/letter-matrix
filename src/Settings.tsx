@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { classNames } from "./helpers/helpers";
-import { Dialog } from "./components/Dialog";
 import { onUpdateProject } from './store/actions';
 import { Project as ProjectType } from './types';
 import { useAppDispatch, useAppSelector } from './hooks/redux';
@@ -13,16 +12,23 @@ export function Settings(_: Props) {
 	const projects = useAppSelector(state => state.projects);
 
 	const currentProject = projects.find(project => project.id == currentId)!;
-	const { rows, cols, sentences } = currentProject;
+	const { rows, cols, sentences, style } = currentProject;
 
 	const [input, setInput] = useState('');
 
 	const updateProject = <K extends keyof ProjectType>(key: K) =>
 		(value: ProjectType[K]) => dispatch(onUpdateProject(currentId, { [key]: value }));
+	
+	const updateStyle = <K extends keyof ProjectType['style']>(key: K) => 
+		(value: ProjectType['style'][K]) => dispatch(onUpdateProject(currentId, { style: { ...style, [key]: value } }));
+
 
 	const setRows = updateProject('rows');
 	const setColumns = updateProject('cols');
 	const setSentences = updateProject('sentences');
+	const setBackgroundColor = updateStyle('background');
+	const setTextColor = updateStyle('text');
+	const setBorder = updateStyle('border');
 
 	const addSentence = () => {
 		if (input) {
@@ -65,8 +71,35 @@ export function Settings(_: Props) {
 					/>
 				</div>
 			</div>
+			<div className="flex gap-3">
+				<div className="flex gap-1">
+					<span>Text color</span>
+					<input
+						type="color"
+						className={classNames(inputClassNames, 'w-14 !p-0')}
+						value={style.text} onInput={e => setTextColor(e.currentTarget.value)}
+					/>
+				</div>
+				<div className="flex gap-1">
+					<span>Background color</span>
+					<input
+						type="color"
+						className={classNames(inputClassNames, 'w-14 !p-0')}
+						value={style.background} onInput={e => setBackgroundColor(e.currentTarget.value)}
+					/>
+				</div>
+				<div className="flex gap-1">
+					<label htmlFor="border-checkbox">Border</label>
+					<input
+						id="border-checkbox"
+						type="checkbox"
+						className={classNames(inputClassNames, 'w-6 !p-0')}
+						checked={style.border} onChange={() => setBorder(!style.border)}
+					/>
+				</div>
+			</div>
 		</div>
 	)
 }
 
-const inputClassNames = "flex-grow border-black border rounded px-1";
+const inputClassNames = classNames("flex-grow border-black border rounded px-1 h-6");

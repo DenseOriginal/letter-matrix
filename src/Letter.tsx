@@ -7,6 +7,7 @@ interface Props {
 	col: number;
 	selected?: string;
 	keyMode?: boolean;
+	color: string;
 }
 
 export const LetterEl = (props: Props) => {
@@ -17,7 +18,7 @@ export const LetterEl = (props: Props) => {
 
 	return keyMode ? (
 		highlight ? (
-			<rect x={props.col * rem} y={props.row * rem} width={rem} height={rem} fill="white" />
+			<rect x={props.col * rem} y={props.row * rem} width={rem} height={rem} fill={props.color} />
 		) : null
 	) : <>
 		{/* <rect x={props.col * rem} y={props.row * rem} width={rem} height={rem} stroke="white" strokeWidth={1} /> */}
@@ -28,7 +29,7 @@ export const LetterEl = (props: Props) => {
 			width={rem}
 			height={rem}
 			fontFamily="Courier New"
-			fill="white"
+			fill={props.color}
 			fontSize={rem}
 			style={{ userSelect: 'none' }}
 		>{props.letter.char}</text>

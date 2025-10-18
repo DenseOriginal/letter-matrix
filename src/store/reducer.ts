@@ -4,12 +4,20 @@ import { Actions } from "./actions";
 const localStorageState = localStorage.getItem('state') || '{}';
 const parsedState = JSON.parse(localStorageState);
 
+const jasonMapper = (state: any) => ({
+	...state,
+	projects: state.projects.map((project: any) => ({
+		...project,
+		style: project.style || { background: "#202029", text: "#ffffff", border: false },
+	}))
+})
+
 const initialState: State = {
 	// Fallback state
 	projects: [],
 
 	// State from localStorage
-	...parsedState,
+	...jasonMapper(parsedState),
 
 	// Overwrite localStorage state with default state
 	currentProject: undefined

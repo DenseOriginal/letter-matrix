@@ -10,6 +10,11 @@ export interface Project {
 	id: string;
 	rows: number;
 	cols: number;
+	style: {
+		background: string;
+		text: string;
+		border: boolean;
+	}
 }
 
 export interface State {
