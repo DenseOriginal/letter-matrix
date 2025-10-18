@@ -1,24 +1,35 @@
 import { useState } from "react";
 import { classNames } from "./helpers/helpers";
+import { Dialog } from "./components/Dialog";
+import { onUpdateProject } from './store/actions';
+import { Project as ProjectType } from './types';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
 
-interface Props {
-	add: (string: string) => void;
-	setRows: (rows: number) => void;
-	setColumns: (columns: number) => void;
-	rows: number;
-	columns: number;
-}
+interface Props {}
 
-export function Settings(props: Props) {
+export function Settings(_: Props) {
+	const dispatch = useAppDispatch();
+	const currentId = useAppSelector(state => state.currentProject!);
+	const projects = useAppSelector(state => state.projects);
+
+	const currentProject = projects.find(project => project.id == currentId)!;
+	const { rows, cols, sentences } = currentProject;
+
 	const [input, setInput] = useState('');
-	
+
+	const updateProject = <K extends keyof ProjectType>(key: K) =>
+		(value: ProjectType[K]) => dispatch(onUpdateProject(currentId, { [key]: value }));
+
+	const setRows = updateProject('rows');
+	const setColumns = updateProject('cols');
+	const setSentences = updateProject('sentences');
+
 	const addSentence = () => {
 		if (input) {
-			props.add(input);
+			setSentences([...sentences, input])
 			setInput('')
 		}
 	}
-
 
 	return (
 		<div className="w-full flex flex-col gap-1 text-sm mb-3">
@@ -42,7 +53,7 @@ export function Settings(props: Props) {
 					<input
 						type="number"
 						className={classNames(inputClassNames, 'w-14 pr-0')}
-						value={props.rows} onChange={e => props.setRows(parseInt(e.currentTarget.value))}
+						value={rows} onChange={e => setRows(parseInt(e.currentTarget.value))}
 					/>
 				</div>
 				<div className="flex gap-1">
@@ -50,7 +61,7 @@ export function Settings(props: Props) {
 					<input
 						type="number"
 						className={classNames(inputClassNames, 'w-14 pr-0')}
-						value={props.columns} onChange={e => props.setColumns(parseInt(e.currentTarget.value))}
+						value={cols} onChange={e => setColumns(parseInt(e.currentTarget.value))}
 					/>
 				</div>
 			</div>

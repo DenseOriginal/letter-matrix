@@ -57,13 +57,7 @@ const Project = () => {
 	const highlight = (hash: string) => setSelected(hash);
 
 	return <section style={{maxWidth: "calc(100vw - 30rem)"}}>
-		<Settings
-			add={add}
-			setRows={setRows}
-			setColumns={setColumns}
-			rows={rows}
-			columns={cols}
-		/>
+		<Settings />
 		<Sentences
 			sentences={sentences}
 			remove={remove}
