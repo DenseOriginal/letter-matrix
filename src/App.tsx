@@ -50,16 +50,11 @@ const Project = () => {
 		[sentences, rows, cols]
 	);
 
-	const remove = (sentence: string) => setSentences(sentences.filter(s => s != sentence));
 	const highlight = (hash: string) => setSelected(hash);
 
 	return <section style={{maxWidth: "calc(100vw - 30rem)"}}>
 		<Settings />
-		<Sentences
-			sentences={sentences}
-			remove={remove}
-			highlight={highlight}
-		/>
+		<Sentences highlight={highlight} />
 
 		<Out code={letters} columns={cols} highlight={selected} />
 
