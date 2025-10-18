@@ -1,34 +1,21 @@
 import { useState } from "react";
 import { classNames } from "./helpers/helpers";
-import { onUpdateProject } from './store/actions';
-import { Project as ProjectType } from './types';
-import { useAppDispatch, useAppSelector } from './hooks/redux';
+import { useAppSelector, useCurrentProjectUpdater } from './hooks/redux';
+import { currentProjectSelector } from "./store/selectors";
 
 interface Props {}
 
 export function Settings(_: Props) {
-	const dispatch = useAppDispatch();
-	const currentId = useAppSelector(state => state.currentProject!);
-	const projects = useAppSelector(state => state.projects);
-
-	const currentProject = projects.find(project => project.id == currentId)!;
-	const { rows, cols, sentences, style } = currentProject;
+	const { rows, cols, sentences, style } = useAppSelector(currentProjectSelector);
 
 	const [input, setInput] = useState('');
 
-	const updateProject = <K extends keyof ProjectType>(key: K) =>
-		(value: ProjectType[K]) => dispatch(onUpdateProject(currentId, { [key]: value }));
-	
-	const updateStyle = <K extends keyof ProjectType['style']>(key: K) => 
-		(value: ProjectType['style'][K]) => dispatch(onUpdateProject(currentId, { style: { ...style, [key]: value } }));
-
-
-	const setRows = updateProject('rows');
-	const setColumns = updateProject('cols');
-	const setSentences = updateProject('sentences');
-	const setBackgroundColor = updateStyle('background');
-	const setTextColor = updateStyle('text');
-	const setBorder = updateStyle('border');
+	const setRows = useCurrentProjectUpdater('rows');
+	const setColumns = useCurrentProjectUpdater('cols');
+	const setSentences = useCurrentProjectUpdater('sentences');
+	const setBackgroundColor = useCurrentProjectUpdater('style.background');
+	const setTextColor = useCurrentProjectUpdater('style.text');
+	const setBorder = useCurrentProjectUpdater('style.border');
 
 	const addSentence = () => {
 		if (input) {

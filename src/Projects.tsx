@@ -1,6 +1,7 @@
 import { classNames } from "./helpers/helpers";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { onAddProject, onDeleteProject, onSetCurrentProject } from "./store/actions";
+import { actions } from "./store/reducer";
 
 const randomId = (length = 6) => {
 	return Math.random().toString(36).substring(2, length + 2);
@@ -19,28 +20,33 @@ export const ProjectsList = () => {
 		const seed = Date.now();
 		const id = randomId();
 
-		dispatch(onAddProject({
+		dispatch(actions.addProject({
 			name,
 			seed,
 			id,
 			sentences: [],
 			rows: defaultRows,
 			cols: defaultCols,
+			style: {
+				background: "#ffffff",
+				text: "#000000",
+				border: true
+			}
 		}));
 
-		dispatch(onSetCurrentProject(id));
+		dispatch(actions.setCurrentProject(id));
 	}
 
 	const selectProject = (id: string) => {
-		dispatch(onSetCurrentProject(id));
+		dispatch(actions.setCurrentProject(id));
 	}
 
 	const deleteProject = (id: string) => {
 		if (id == currentProject) {
-			dispatch(onSetCurrentProject(undefined));
+			dispatch(actions.setCurrentProject(undefined));
 		}
 
-		dispatch(onDeleteProject(id));
+		dispatch(actions.deleteProject(id));
 	}
 
 	return <div className="absolute top-0 -left-6 -translate-x-full w-44">

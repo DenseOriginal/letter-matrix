@@ -1,5 +1,5 @@
-import { State } from "../types";
-import { Actions } from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Project, State } from "../types";
 
 const localStorageState = localStorage.getItem('state') || '{}';
 const parsedState = JSON.parse(localStorageState);
@@ -23,36 +23,50 @@ const initialState: State = {
 	currentProject: undefined
 }
 
-const setState = (state: State, update: Partial<State>) => {
-	const newState = { ...state, ...update };
-	localStorage.setItem('state', JSON.stringify(state));
-	return newState;
-}
+const slice = createSlice({
+	name: "letter-matrix",
+	initialState,
+	reducers: {
+		addProject: (state, action: PayloadAction<Project>) => {
+			state.projects.push(action.payload);
+		},
+		setCurrentProject: (state, action: PayloadAction<string | undefined>) => {
+			state.currentProject = action.payload;
+		},
+		updateProject: (state, action: PayloadAction<{ id: string, update: Partial<Project> }>) => {
+			state.projects = state.projects.map(
+				project => project.id == action.payload.id ?
+					{ ...project, ...action.payload.update } :
+					project
+			);
+		},
+		updateCurrentProject: (state, action: PayloadAction<Partial<Project>>) => {
+			state.projects = state.projects.map(
+				project => project.id == state.currentProject ?
+					{ ...project, ...action.payload } :
+					project
+			);
+		},
+		setCurrentProjectProp: <K extends DeepKeys<Project>>(state: State, action: PayloadAction<{ prop: K, update: DeepValue<Project, K> }>) => {
+			const currentProject = state.projects.find(cur => cur.id == state.currentProject);
+			if (!currentProject) return;
+			
+			const splitPaths = action.payload.prop.split(".");
+			let current: Record<string, any> = currentProject;
+			while(splitPaths.length > 1) {
+				const key = splitPaths.shift()!;
+				current = current[key];
+			}
 
-export const reducer = (state: State = initialState, action: Actions) => {
-	switch (action.type) {
-		case 'ADD_PROJECT':
-			return setState(state, {
-				projects: [...state.projects, action.project]
-			});
-		case 'SET_CURRENT_PROJECT':
-			return setState(state, {
-				currentProject: action.id
-			});
-		case 'UPDATE_PROJECT':
-			return setState(state, {
-				projects: state.projects.map(project => {
-					if (project.id === action.id) {
-						return { ...project, ...action.update };
-					}
-					return project;
-				})
-			});
-		case 'DELETE_PROJECT':
-			return setState(state, {
-				projects: state.projects.filter(project => project.id !== action.id)
-			});
-		default:
-			return state;
+			const lastKey = splitPaths[0];
+			current[lastKey] = action.payload.update;
+		},
+		deleteProject: (state, action: PayloadAction<string>) => {
+			state.projects = state.projects.filter(project => project.id != action.payload);
+		}
 	}
-}
+
+})
+
+export const reducer = slice.reducer;
+export const actions = slice.actions;

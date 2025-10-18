@@ -1,22 +1,15 @@
 import { currentProjectSelector } from "./store/selectors";
 import { hash } from './helpers/helpers';
-import { useAppDispatch, useAppSelector } from './hooks/redux';
-import { onUpdateProject } from './store/actions';
-import { Project as ProjectType } from './types';
+import { useAppSelector, useCurrentProjectUpdater } from './hooks/redux';
 
 interface Props {
 	highlight: (hash: string) => void;
 }
 
 export function Sentences(props: Props) {
-	const dispatch = useAppDispatch();
+	const { sentences } = useAppSelector(currentProjectSelector);
 
-	const { sentences, id } = useAppSelector(currentProjectSelector);
-
-	const updateProject = <K extends keyof ProjectType>(key: K) =>
-		(value: ProjectType[K]) => dispatch(onUpdateProject(id, { [key]: value }));
-
-	const setSentences = updateProject('sentences');
+	const setSentences = useCurrentProjectUpdater('sentences');
 	const remove = (sentence: string) => setSentences(sentences.filter(s => s != sentence));
 
 	return <div className="w-full my-2 overflow-hidden">
